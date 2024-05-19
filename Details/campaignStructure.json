@@ -1,0 +1,23 @@
+{
+    "campaignResponses": 
+    [
+        {
+            "campaignId": "m2o0x",
+            "campaignName": "Canada A2A Message CA-EN",
+            "campaignType": "Web",
+            "experienceId": "di4Mx",
+            "experienceName": "Experience 1",
+            "state": "Published",
+            "campaignJavascriptContent": "setInterval(function(){\r\n    if(window.getCookie('clientApp') !== 'Leap' && window.getCookie('enableNextGenWeb') !== 'true') {\r\n        Evergage.trackAction('non leap page');\r\n    }\r\n}, 3000);",
+            "javascriptContent": "var evergageLoyaltySummary = JSON.parse(sessionStorage.getItem(\"resLoyalityCard\"));\nif (evergageLoyaltySummary && evergageLoyaltySummary.gatewayCustomer.additionalPreferredCustomers.preferredCustomer.accountNbr && evergageLoyaltySummary.gatewayCustomer.additionalPreferredCustomers.preferredCustomer.accountNbr !== null ) {\n    return Evergage.ExperienceJS.DelayImpression;\n} else {\n    return false;\n}",
+            "messages": [
+                {
+                    "htmlContent": "<div id=\"jamaica-ca-banner\" style=\"display: block; top: 0px; left: 0.5px; color: rgb(0, 0, 0); height: auto; position: relative; padding: 23px 0px 20px 8px; border-width: 1px 1px 1px 74.9974px; border-style: solid; border-color: rgb(255, 221, 0); width: auto; margin-bottom: 30px; border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;\"><img src=\"https://www.westernunion.com/content/dam/wu/images/icon-bank-40.svg\" draggable=\"false\" style=\"position: absolute; width: 40px; height: 40px; border: none;top:10px;left:-60px;\" class=\"\"><b class=\"\">NEW!</b> Now send money directly from your bank account to theirs for a&nbsp;$2&nbsp;fee² up to $999 for My WU® members. Offer only available on WU.ca or the WU app.</div>",
+                    "cssContent": "",
+                    "javascriptContent": "",
+                    "campaignState": "Published"
+                }
+            ]
+        }
+    ]
+}
