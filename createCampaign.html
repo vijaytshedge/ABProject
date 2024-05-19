@@ -13,6 +13,11 @@
   <select  id="type">
     <option value="WEB">Web</option>
     <option value="App">App</option>
+  </select><br>
+  <label for="name">Campaign status:</label>
+  <select  id="status">
+    <option value="Published">Published</option>
+    <option value="Disabled">Disabled</option>
   </select><br><br>
   <hr>
   <div id="experienceFields">
@@ -29,6 +34,87 @@
   <button onclick="addExperience()">Add Experience</button><br><br>
   <button onclick="saveData()">Save Data</button>
 
-  <script src="createCampaign.js" type="text/javascript"></script>
 </body>
+<script type="text/javascript">
+  
+function addExperience() {
+  const experienceFields = document.getElementById('experienceFields');
+  const experienceDiv = document.createElement('div');
+  experienceDiv.classList.add('experience');
+
+  experienceDiv.innerHTML = `
+    <hr>
+    <label for="expName">Experience Name:</label>
+    <input type="text" class="expName"><br><br>
+    <label for="text">HTML:</label>
+    <textarea class="text"></textarea><br><br>
+    <label for="code">Code:</label>
+    <textarea class="code"></textarea><br><br>
+  `;
+
+  experienceFields.appendChild(experienceDiv);
+}
+
+function saveData() {
+  const name = document.getElementById('name').value;
+  const type = document.getElementById('type').value;
+  const status = document.getElementById('status').value;
+  const experienceDivs = document.querySelectorAll('.experience');
+
+  let experiences = [];
+
+  experienceDivs.forEach(expDiv => {
+    const expName = expDiv.querySelector('.expName').value;
+    const text = expDiv.querySelector('.text').value;
+    const code = expDiv.querySelector('.code').value;
+
+    experiences.push({
+      experienceName: expName,
+      htmlCode: text,
+      jsCode: code
+    });
+  });
+
+  const data = {
+    name: name,
+    type: type,
+    status: status,
+    experiences: experiences
+  };
+
+  const jsonData = JSON.stringify(data);
+
+  // For demonstration purposes, you can console log the JSON data.
+  console.log(jsonData);
+
+  /* 
+
+  const filePath = 'data.json';
+
+// Write JSON data to file
+fs.writeFile(filePath, jsonData, (err) => {
+  if (err) {
+    console.error('Error writing JSON file:', err);
+  } else {
+    console.log('JSON data has been written to', filePath);
+  }
+});
+ */
+
+  fetch('/saveEvergage', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: jsonData,
+  })
+  .then(response => {
+    console.log('Data saved successfully!');
+  })
+  .catch(error => {
+    console.error('Error saving data:', error);
+  });
+}
+
+</script>
 </html>
