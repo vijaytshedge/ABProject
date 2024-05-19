@@ -1,76 +1,72 @@
 const express = require("express")
-const accountRoutes = express.Router();
+const campaignRoutes = express.Router();
 const fs = require('fs');
 
-const dataPath = './Details/campaignStructure.json' 
-
-// util functions 
-
-const saveAccountData = (data) => {
-    const stringifyData = JSON.stringify(data)
-    fs.writeFileSync(dataPath, stringifyData)
-}
-
-const getAccountData = () => {
-    const jsonData = fs.readFileSync(dataPath)
-    return JSON.parse(jsonData)    
-}
+const dataPath = './Details/campaignDB.json'
 
 
-// reading the data
-accountRoutes.get('/campaigns', (req, res) => {
-    fs.readFile(dataPath, 'utf8', (err, data) => {
-      if (err) {
-        throw err;
-      }
+campaignRoutes.post('/campaigns/add', (req, res) => {
 
-      res.send(JSON.parse(data));
+  
+  let jsonData = JSON.stringify(req.body);
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+
+  //specify the length for the new string  
+  const lenString = 7;
+  let randomstring = '';
+
+  //loop to select a new character in each iteration  
+  for (var i = 0; i < lenString; i++) {
+      var rnum = Math.floor(Math.random() * characters.length);
+      randomstring += characters.substring(rnum, rnum + 1);
+  }
+  jsonData = JSON.parse(jsonData);
+  jsonData.campaignId = randomstring;
+  console.log(jsonData);
+  const exists = fs.existsSync(dataPath);
+  if (exists) {
+      fs.readFile(dataPath, function (err, data) {
+
+          let json = JSON.parse(data);
+          json.push(jsonData);
+          fs.writeFile(dataPath, JSON.stringify(json), (err) => {
+              if (err) {
+                  console.error('Error writing JSON file:', err);
+              } else {
+                  console.log('JSON data has been written to', dataPath);
+              }
+          })
+      });
+  } else {
+      console.log("File does not exists");
+      let json = [];
+      json.push(jsonData);
+      fs.writeFile(dataPath, JSON.stringify(json), (err) => {
+          if (err) {
+              console.error('Error writing JSON file:', err);
+          } else {
+              console.log('JSON data has been written to', dataPath);
+          }
+      })
+  }
+
+  res.send({ success: true, msg: 'account data added successfully' })
+})
+
+
+campaignRoutes.get('/campaigns/list', (req, res) => {
+    const exists = fs.existsSync(dataPath);
+    let result = [];
+    if (exists) {
+        result = fs.readFileSync(dataPath);
+    }
+    let data = JSON.parse(result);
+    data = data.filter(function (obj) {
+        return obj.status == 'Published';
     });
-  });
-
-
-accountRoutes.post('/campaigns/add', (req, res) => {
-   
-    var existAccounts = getAccountData()
-    const newAccountId = Math.floor(100000 + Math.random() * 900000)
-   
-    existAccounts[newAccountId] = req.body
-     
-    console.log(existAccounts);
-
-    saveAccountData(existAccounts);
-    res.send({success: true, msg: 'account data added successfully'})
+    console.log(data);
+    res.send(data);
 })
 
-// Read - get all accounts from the json file
-accountRoutes.get('/campaigns/list', (req, res) => {
-  const accounts = getAccountData()
-  res.send(accounts)
-})
 
-// Update - using Put method
-accountRoutes.put('/campaigns/:id', (req, res) => {
-   var existAccounts = getAccountData()
-   fs.readFile(dataPath, 'utf8', (err, data) => {
-    const accountId = req.params['id'];
-    existAccounts[accountId] = req.body;
-
-    saveAccountData(existAccounts);
-    res.send(`accounts with id ${accountId} has been updated`)
-  }, true);
-});
-
-//delete - using delete method
-accountRoutes.delete('/campaigns/delete/:id', (req, res) => {
-   fs.readFile(dataPath, 'utf8', (err, data) => {
-    var existAccounts = getAccountData()
-
-    const userId = req.params['id'];
-
-    delete existAccounts[userId];  
-    saveAccountData(existAccounts);
-    res.send(`accounts with id ${userId} has been deleted`)
-  }, true);
-})
-
-module.exports = accountRoutes
+module.exports = campaignRoutes
